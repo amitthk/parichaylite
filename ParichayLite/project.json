@@ -1,0 +1,61 @@
+{
+  "webroot": "wwwroot",
+  "userSecretsId": "MvcBoilerplate-296cba98-b2a8-4dcc-bbb4-0bdbcc6139c7",
+  "version": "1.0.0-*",
+
+  "dependencies": {
+    "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
+    "Microsoft.AspNet.IISPlatformHandler": "1.0.0-beta8",
+    "Microsoft.AspNet.Server.WebListener": "1.0.0-beta7",
+    "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
+    "Microsoft.AspNet.StaticFiles": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
+    "Microsoft.AspNet.Identity": "3.0.0-rc1-final",
+    "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-final",
+    "Microsoft.Framework.ConfigurationModel": "1.0.0-beta4",
+    "Microsoft.Framework.ConfigurationModel.UserSecrets": "1.0.0-beta4",
+    "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
+    "Microsoft.AspNet.Diagnostics": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Http": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Mvc.Formatters.Json": "6.0.0-rc1-final",
+    "Microsoft.AspNet.Routing": "1.0.0-rc1-*",
+    "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+    "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
+    "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
+    "Microsoft.Extensions.DependencyInjection": "1.0.0-beta8",
+    "System.Net.Http": "4.0.1-beta-23516",
+    "Microsoft.Net.Http": "2.2.29",
+    "Microsoft.Net.Http.Headers": "1.0.0-rc1-final",
+    "Swashbuckle.Swagger": "6.0.0-beta8",
+    "Swashbuckle.SwaggerGen": "",
+    "Swashbuckle.SwaggerUi": "",
+    "AspNet.Security.OpenIdConnect.Server": "1.0.0-beta4",
+    "Microsoft.AspNet.Authentication.Google": "1.0.0-rc1-final",
+    "ParichayLite.Data": "",
+    "ParichayLite.Domain": "",
+    "Newtonsoft.Json": "7.0.1"
+  },
+
+  "commands": {
+       "web": "Microsoft.AspNet.Hosting  --server Microsoft.AspNet.Server.Kestrel --server.urls http://localhost:5003"
+  },
+
+  "frameworks": {
+    "dnxcore50": { }
+  },
+
+  "exclude": [
+    "wwwroot",
+    "node_modules",
+    "bower_components"
+  ],
+  "publishExclude": [
+    "node_modules",
+    "bower_components",
+    "**.xproj",
+    "**.user",
+    "**.vspscc"
+  ]
+}

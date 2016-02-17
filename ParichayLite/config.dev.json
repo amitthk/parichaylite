@@ -1,0 +1,8 @@
+﻿{
+  "debug": true,
+  "RecreateDatabase": true,
+  "Data": {
+    "BlogData": { "ConnectionString": "Server=(LocalDb)\\MSSQLLocalDb;Database=mimshl7" },
+    "Identity": { "ConnectionString": "Server=(LocalDb)\\MSSQLLocalDb;Database=mimshl7_Identity" }
+  }
+}

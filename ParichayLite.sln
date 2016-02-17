@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ParichayLite", "ParichayLite\ParichayLite.xproj", "{0B0D4011-1B66-4B9A-80EC-5309A8CAE9C9}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ParichayLite.Data", "ParichayLite.Data\ParichayLite.Data.xproj", "{A3CF632C-1A7F-450C-BFC1-1EC26F9D9DD3}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ParichayLite.Domain", "ParichayLite.Domain\ParichayLite.Domain.xproj", "{F7954414-52A8-4732-9B7E-4AFFCA184451}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Swashbuckle.SwaggerGen", "Swashbuckle.SwaggerGen\Swashbuckle.SwaggerGen.xproj", "{4AC6DB4A-CBA2-493D-88F8-82D631B9DA7B}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Swashbuckle.SwaggerUi", "Swashbuckle.SwaggerUi\Swashbuckle.SwaggerUi.xproj", "{1C14CC40-1D89-4DA9-A1D8-237FD8922371}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0B0D4011-1B66-4B9A-80EC-5309A8CAE9C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B0D4011-1B66-4B9A-80EC-5309A8CAE9C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B0D4011-1B66-4B9A-80EC-5309A8CAE9C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B0D4011-1B66-4B9A-80EC-5309A8CAE9C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3CF632C-1A7F-450C-BFC1-1EC26F9D9DD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3CF632C-1A7F-450C-BFC1-1EC26F9D9DD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3CF632C-1A7F-450C-BFC1-1EC26F9D9DD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3CF632C-1A7F-450C-BFC1-1EC26F9D9DD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7954414-52A8-4732-9B7E-4AFFCA184451}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7954414-52A8-4732-9B7E-4AFFCA184451}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7954414-52A8-4732-9B7E-4AFFCA184451}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7954414-52A8-4732-9B7E-4AFFCA184451}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AC6DB4A-CBA2-493D-88F8-82D631B9DA7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AC6DB4A-CBA2-493D-88F8-82D631B9DA7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AC6DB4A-CBA2-493D-88F8-82D631B9DA7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AC6DB4A-CBA2-493D-88F8-82D631B9DA7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C14CC40-1D89-4DA9-A1D8-237FD8922371}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C14CC40-1D89-4DA9-A1D8-237FD8922371}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C14CC40-1D89-4DA9-A1D8-237FD8922371}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C14CC40-1D89-4DA9-A1D8-237FD8922371}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,6 @@
+{
+  "projects": [ "ParichayLite", "ParichayLite.Data", "ParichayLite.Domain", "ParichayLite.Security", "Swashbuckle", "Swashbuckle.SwaggerGen","Swashbuckle.SwaggerUi"],
+  "sdk": {
+    "version": "1.0.0-rc1-final"
+  }
+}
