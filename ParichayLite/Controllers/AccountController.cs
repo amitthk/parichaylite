@@ -6,83 +6,101 @@
     using System.Threading.Tasks;
     using Microsoft.AspNet.Http;
     using Microsoft.AspNet.Mvc;
+    using Models.Identity;
+    using Models;
 
-    [Route("api/Account")]
     public class AccountController : Controller
     {
-        private readonly AuthRepository authRepository = null;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AccountController(AuthRepository authRepository)
+        public AccountController(UserManager<ApplicationUser> userManager,
+                                 SignInManager<ApplicationUser> signInManager)
         {
-            this.authRepository = authRepository;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
-        // POST api/Account/Register
-        //[AllowAnonymous]
-        [Route("Register")]
-        public async Task<IActionResult> Register(UserModel userModel)
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View(new LoginViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel login, string returnUrl = null)
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return View(login);
             }
 
-
-            Domain.Models.UserModel umodel = new Domain.Models.UserModel() { UserName = userModel.UserName, Password = userModel.Password, ConfirmPassword = userModel.ConfirmPassword };
-            var result = await authRepository.RegisterUser(umodel);
-
-            var errorResult = GetErrorResult(result);
-
-            if (errorResult != null)
-            {
-                return errorResult;
-            }
-
-            return Ok();
-        }
-
-        //public IHttpActionResult Get() {
-
-        //    var result =  new
-        //    {
-        //        IP = HttpContext.Current.Request.UserHostAddress,
-        //        HostName =    HttpContext.Current.Request.UserHostName,
-        //        Url = HttpContext.Current.Request.Url.Host,
-        //        XOriginalURL = HttpContext.Current.Request.Headers.GetValues("X-Original-URL"),
-        //        HeaderKeys = HttpContext.Current.Request.Headers.AllKeys,
-        //        Origin = HttpContext.Current.Request.Headers.GetValues("Origin")
-        //    };
-
-        //    return Ok(result);
-        //}
-
-        private IActionResult GetErrorResult(IdentityResult result)
-        {
-            if (result == null)
-            {
-                return HttpBadRequest();
-            }
+            var result = await _signInManager.PasswordSignInAsync(
+                login.EmailAddress,
+                login.Password,
+                login.RememberMe,
+                false);
 
             if (!result.Succeeded)
             {
-                if (result.Errors != null)
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError("", error.Description);
-                    }
-                }
-
-                if (ModelState.IsValid)
-                {
-                    // No ModelState errors are available to send, so just return an empty BadRequest.
-                    return HttpBadRequest();
-                }
-
-                return HttpBadRequest(ModelState);
+                return View(login);
             }
 
-            return null;
+            if (string.IsNullOrWhiteSpace(returnUrl))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            return Redirect(returnUrl);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout(string returnUrl = null)
+        {
+            await _signInManager.SignOutAsync();
+
+            if (string.IsNullOrWhiteSpace(returnUrl))
+                return RedirectToAction("Index", "Home");
+
+            return Redirect(returnUrl);
+        }
+
+
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View(new RegisterViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel registration)
+        {
+            if (!ModelState.IsValid)
+                return View(registration);
+
+            var newUser = new ApplicationUser
+            {
+                Email = registration.EmailAddress,
+                UserName = registration.EmailAddress,
+            };
+
+            var result = await _userManager.CreateAsync(newUser, registration.Password);
+
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Error creating user");
+                foreach (var err in result.Errors)
+                {
+                    ModelState.AddModelError(err.Code, err.Description);
+                }
+                return View(registration);
+            }
+
+            return RedirectToAction("Login");
+        }
+
     }
+
 }

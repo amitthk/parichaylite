@@ -18,20 +18,27 @@ using Microsoft.AspNet.Authentication.Google;
 using Microsoft.AspNet.Authentication.OAuth;
 using System.Threading.Tasks;
 using Microsoft.Extensions.WebEncoders;
+using Microsoft.AspNet.Http;
+using ParichayLite.Models.Providers;
+using ParichayLite.Models.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.Extensions.Configuration;
 
 namespace ParichayLite
 {
     public class Startup
     {
-        private IConfiguration config;
+        private Microsoft.Extensions.Configuration.IConfiguration config;
 
-        public Startup()
+        public Startup(IHostingEnvironment env, Microsoft.Extensions.PlatformAbstractions.IApplicationEnvironment appEnv)
         {
-            config = new Configuration()
+            var configurationBuilder = new ConfigurationBuilder()
+                .SetBasePath(appEnv.ApplicationBasePath)
                 .AddEnvironmentVariables()
             .AddJsonFile("config.json")
             .AddJsonFile("config.dev.json", true);
 
+            config = configurationBuilder.Build();
 
             //var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
             //jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -41,9 +48,7 @@ namespace ParichayLite
         {
             services.AddMvc();
 
-
-            ConfigureDependencies(services);
-            
+            ConfigureDI(services);
 
             services.AddSwaggerGen();
             services.ConfigureSwaggerGen(opt => {
@@ -59,62 +64,32 @@ namespace ParichayLite
            
         }
 
-        private void ConfigureDependencies(IServiceCollection services)
+        private void ConfigureDI(IServiceCollection services)
         {
-            services.AddSingleton<DbContext>();
-
-            services.AddSingleton<AuthRepository>();
-            services.AddSingleton<ProjectsRepository>();
+            string identityConnectionString = config["Data:Identity:ConnectionString"];
 
 
-            services.AddSingleton<ParichayLite.Domain.ApplicationIdentityContext>();
+            services.AddScoped<IdentityDataContext>();
 
-            services.AddSingleton<UserManager<User>>();
+            services.AddEntityFramework().AddSqlite().AddDbContext<IdentityDataContext>(cfg => cfg.UseSqlite(identityConnectionString));
 
-            services.AddSingleton<RoleManager<Role>>();
-         
+            services.AddIdentity<Models.Identity.ApplicationUser, IdentityRole>().AddEntityFrameworkStores<Models.Identity.IdentityDataContext>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.MinimumLevel = LogLevel.Information;
-            loggerFactory.AddConsole();
-            loggerFactory.AddDebug();
             app.UseMvc(routes => routes.MapRoute(
     "Default", "{controller=Home}/{action=Index}/{id?}"));
             // BundleConfig.RegisterBundles();
 
 
+            app.UseIdentity();
 
 
-            ///*******
-            ////builder.RegisterType<SimpleAuthorizationServerProvider>()
-            ////    .AsImplementedInterfaces<IOAuthAuthorizationServerProvider, ConcreteReflectionActivatorData>()
-            ////    .WithParameters(new Parameter[]
-            ////    {
-            ////        new NamedParameter("publicClientId", "self"),
-            ////        new ResolvedParameter((info, context) => info.Name == "userManager",
-            ////            (info, context) => context.Resolve<ApplicationUserManager>())
-            ////    });
-
-            // ********/
+            //ConfigureOAuth(app, env);
 
 
-
-
-           //// app.Use(typeof(AuthMiddleware)); This is dummy middleware no longer used.
-
-            //var fileSystem = new PhysicalFileSystem(@".\");
-            //var options = new FileServerOptions {
-            //          EnableDirectoryBrowsing = false,
-            //          FileSystem = fileSystem
-            //          };
-
-            ConfigureOAuth(app, env);
-
-
-            string isdebug = "";
-            if (config.TryGet("debug", out isdebug) && (isdebug.ToLower().Equals("true")))
+            if (config.Get<bool>("debug"))
             {
                 app.UseDeveloperExceptionPage();
                 app.UseRuntimeInfoPage();
@@ -129,12 +104,23 @@ namespace ParichayLite
             app.UseSwaggerGen();
             app.UseSwaggerUi();
 
+            loggerFactory.MinimumLevel = LogLevel.Information;
+            loggerFactory.AddConsole();
+            loggerFactory.AddDebug();
+
             //InitializeData(container);
 
         }
 
-        private void ConfigureOAuth(IApplicationBuilder app, IHostingEnvironment env)
-        {
+    void ConfigureOAuth(IApplicationBuilder app, IHostingEnvironment env)
+    {
+
+            app.UseCookieAuthentication(options =>
+            {
+                options.LoginPath = new PathString("/account/login");
+                options.AutomaticAuthenticate = true;
+                options.AuthenticationScheme = "Cookies";
+            });
 
             app.UseGoogleAuthentication(options =>
             {
@@ -153,82 +139,42 @@ namespace ParichayLite
 
             });
 
-
-            //    app.UseOpenIdConnectServer(options => {
-            //        options.Provider = new OpenIdConnectServerProvider
-            //        {
-            //            // Implement OnValidateAuthorizationRequest to support interactive flows (code/implicit/hybrid).
-            //            OnValidateAuthorizationRequest = context => {
-            //                // Note: you MUST NOT validate the request if client_id is invalid or if redirect_uri
-            //                // doesn't correspond to a trusted URL associated with the client application.
-            //                // You SHOULD also strongly consider validating the type of the client application
-            //                // (public or confidential) to prevent code flow -> implicit flow downgrade attacks.
-            //                if (string.Equals(context.ClientId, "client_id", StringComparison.Ordinal) &&
-            //                    string.Equals(context.RedirectUri, "redirect_uri", StringComparison.Ordinal))
-            //                {
-            //                    context.Validate();
-            //                }
-
-            //                // Note: if Validate() is not explicitly called,
-            //                // the request is automatically rejected.
-            //                return Task.FromResult(0);
-            //            }
-
-            //// Implement OnValidateTokenRequest to support flows using the token endpoint.
-            //            OnValidateTokenRequest = context => {
-            //    // Note: you can skip the request validation when the client_id
-            //    // parameter is missing to support unauthenticated token requests.
-            //    // if (string.IsNullOrEmpty(context.ClientId)) {
-            //    //     context.Skip();
-            //    // }
-
-            //    // Note: to mitigate brute force attacks, you SHOULD strongly consider applying
-            //    // a key derivation function like PBKDF2 to slow down the secret validation process.
-            //    // You SHOULD also consider using a time-constant comparer to prevent timing attacks.
-            //    if (string.Equals(context.ClientId, "client_id", StringComparison.Ordinal) &&
-            //        string.Equals(context.ClientSecret, "client_secret", StringComparison.Ordinal))
-            //    {
-            //        context.Validate();
-            //    }
-
-            //    // Note: if Validate() is not explicitly called,
-            //    // the request is automatically rejected.
-            //    return Task.FromResult(0);
-            //}
-            //        };
-            //    });
+            app.UseOpenIdConnectServer(options => {
+                options.Provider = new AuthorizationProvider();
+            });
         }
+
 
         private void InitializeData(IApplicationBuilder app)
         {
-            var dbctx= app.ApplicationServices.GetRequiredService<SqliteContext>();
+            //var dbctx= app.ApplicationServices.GetRequiredService<SqliteContext>();
 
-            if (dbctx.Clients.Count == 0)
-            {
-                dbctx.Clients.Add(new Client
-                {
-                    Id = "ngAuthApp",
-                    Secret = Helper.GetHash("abc@123"),
-                    Name = "AngularJS front-end Application",
-                    ApplicationType = Domain.Models.ApplicationTypes.JavaScript,
-                    Active = true,
-                    RefreshTokenLifeTime = 7200,
-                    AllowedOrigin = "http://localhost:61528",
-                    //AllowedOrigin = "http://ngauthenticationweb.azurewebsites.net"
-                });
+            //if (dbctx.Clients.Count == 0)
+            //{
+            //    dbctx.Clients.Add(new Client
+            //    {
+            //        Id = "ngAuthApp",
+            //        Secret = Helper.GetHash("abc@123"),
+            //        Name = "AngularJS front-end Application",
+            //        ApplicationType = Domain.Models.ApplicationTypes.JavaScript,
+            //        Active = true,
+            //        RefreshTokenLifeTime = 7200,
+            //        AllowedOrigin = "http://localhost:61528",
+            //        //AllowedOrigin = "http://ngauthenticationweb.azurewebsites.net"
+            //    });
 
-                dbctx.Clients.Add(new Client
-                {
-                    Id = "consoleApp",
-                    Secret = Helper.GetHash("123@abc"),
-                    Name = "Console Application",
-                    ApplicationType = Domain.Models.ApplicationTypes.NativeConfidential,
-                    Active = true,
-                    RefreshTokenLifeTime = 14400,
-                    AllowedOrigin = "*"
-                });
-                dbctx.Database.SaveChanges();
-            }
+            //    dbctx.Clients.Add(new Client
+            //    {
+            //        Id = "consoleApp",
+            //        Secret = Helper.GetHash("123@abc"),
+            //        Name = "Console Application",
+            //        ApplicationType = Domain.Models.ApplicationTypes.NativeConfidential,
+            //        Active = true,
+            //        RefreshTokenLifeTime = 14400,
+            //        AllowedOrigin = "*"
+            //    });
+            //    dbctx.Database.SaveChanges();
+            //}
         }
     }
 }
