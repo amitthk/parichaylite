@@ -1,3 +1,6 @@
 */bower_components
 */*.xproj.user
 */node_modules
+.vs
+*/*.suo
+*/project.lock.json
