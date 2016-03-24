@@ -21,13 +21,13 @@
             _signInManager = signInManager;
         }
 
-        [HttpGet]
+        [HttpGet("login")]
         public IActionResult Login()
         {
             return View(new LoginViewModel());
         }
 
-        [HttpPost]
+        [HttpPost("login")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel login, string returnUrl = null)
         {
@@ -55,7 +55,7 @@
             return Redirect(returnUrl);
         }
 
-        [HttpPost]
+        [HttpPost("logout")]
         public async Task<IActionResult> Logout(string returnUrl = null)
         {
             await _signInManager.SignOutAsync();
@@ -68,13 +68,13 @@
 
 
 
-        [HttpGet]
+        [HttpGet("register")]
         public IActionResult Register()
         {
             return View(new RegisterViewModel());
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterViewModel registration)
         {
             if (!ModelState.IsValid)

@@ -55,8 +55,8 @@ namespace ParichayLite
                 opt.SingleApiVersion(new Swashbuckle.SwaggerGen.Generator.Info
                 {
                     Version = "v1",
-                    Title = "MIMS HL7 API",
-                    Description = "MIMS HL7 parser",
+                    Title = "ParichayLite API",
+                    Description = "ParichayLite API",
                     TermsOfService = "None"
                 });
             });
